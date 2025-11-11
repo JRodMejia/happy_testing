@@ -1,0 +1,33 @@
+// ***********************************************************
+// This example support/e2e.js is processed and
+// loaded automatically before your test files.
+//
+// This is a great place to put global configuration and
+// behavior that modifies Cypress.
+//
+// You can change the location of this file or turn off
+// automatically serving support files with the
+// 'supportFile' configuration option.
+//
+// You can read more here:
+// https://on.cypress.io/configuration
+// ***********************************************************
+
+// Import commands
+import './commands/commonCommands';
+import './commands/loginCommands';
+
+// Hide fetch/XHR requests from command log
+const app = window.top;
+if (!app.document.head.querySelector('[data-hide-command-log-request]')) {
+  const style = app.document.createElement('style');
+  style.innerHTML = '.command-name-request, .command-name-xhr { display: none }';
+  style.setAttribute('data-hide-command-log-request', '');
+  app.document.head.appendChild(style);
+}
+
+// Global before hook
+beforeEach(() => {
+  // Only clear cookies/storage when NOT using cy.session()
+  // cy.session() handles this automatically
+});

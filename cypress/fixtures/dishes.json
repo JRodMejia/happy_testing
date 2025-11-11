@@ -1,0 +1,30 @@
+{
+  "validDish": {
+    "name": "Ensalada César",
+    "description": "Ensalada fresca con pollo y aderezo césar",
+    "prepTime": 15,
+    "cookTime": 10,
+    "quickPrep": true,
+    "imageUrl": "https://example.com/caesar-salad.jpg"
+  },
+  "anotherDish": {
+    "name": "Pollo Asado",
+    "description": "Pollo marinado asado al horno",
+    "prepTime": 20,
+    "cookTime": 45,
+    "quickPrep": false,
+    "imageUrl": "https://example.com/grilled-chicken.jpg"
+  },
+  "updatedDish": {
+    "name": "Ensalada César Premium",
+    "description": "Ensalada César con camarones",
+    "prepTime": 20,
+    "cookTime": 15
+  },
+  "invalidDish": {
+    "name": "",
+    "description": "",
+    "prepTime": -5,
+    "cookTime": -10
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "validUser": {
+    "email": "test@nutriapp.com",
+    "password": "nutriapp123"
+  },
+  "newUser": {
+    "firstName": "Cypress",
+    "lastName": "Test",
+    "email": "cypress.test@example.com",
+    "nationality": "México",
+    "phone": "+52123456789",
+    "password": "CypressTest123!"
+  },
+  "invalidUser": {
+    "email": "invalid@test.com",
+    "password": "wrongpassword"
+  }
+}
