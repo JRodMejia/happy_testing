@@ -56,7 +56,7 @@ describe('Dishes CRUD - Create Operations', () => {
   });
 
   it('should handle quick prep checkbox', () => {
-    cy.fixture('dishes').then((dishes) => {
+    cy.fixture('dishes').then(() => {
       dishesPage.visit();
       dishesPage.clickAddDish();
       
@@ -80,7 +80,7 @@ describe('Dishes CRUD - Create Operations', () => {
   });
 
   it('should validate negative prepTime', () => {
-    cy.fixture('dishes').then((dishes) => {
+    cy.fixture('dishes').then(() => {
       dishesPage.visit();
       dishesPage.clickAddDish();
       
@@ -94,7 +94,7 @@ describe('Dishes CRUD - Create Operations', () => {
   });
 
   it('should validate negative cookTime', () => {
-    cy.fixture('dishes').then((dishes) => {
+    cy.fixture('dishes').then(() => {
       dishesPage.visit();
       dishesPage.clickAddDish();
       

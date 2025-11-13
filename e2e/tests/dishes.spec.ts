@@ -17,7 +17,7 @@ test.describe('Dishes Page - Positive Tests', () => {
     await expect(page).toHaveURL(/.*\/dishes/);
   });
 
-  test('should display dishes page elements correctly', async ({ page }) => {
+  test('should display dishes page elements correctly', async () => {
     await expect(dishesPage.dishesHeading).toBeVisible();
     await expect(dishesPage.dishesHeading).toHaveText('Sugerencias de Platillos');
     await expect(dishesPage.addDishButton).toBeVisible();
@@ -33,7 +33,7 @@ test.describe('Dishes Page - Positive Tests', () => {
     await expect(newDishPage.newDishHeading).toBeVisible();
   });
 
-  test('should display dishes list or empty state', async ({ page }) => {
+  test('should display dishes list or empty state', async () => {
     const hasEmptyState = await dishesPage.isEmptyStateVisible();
     const hasDishesList = await dishesPage.isDishesListVisible();
     
@@ -41,7 +41,7 @@ test.describe('Dishes Page - Positive Tests', () => {
     expect(hasEmptyState || hasDishesList).toBeTruthy();
   });
 
-  test('should display empty state message when no dishes', async ({ page }) => {
+  test('should display empty state message when no dishes', async () => {
     const hasEmptyState = await dishesPage.isEmptyStateVisible();
     
     if (hasEmptyState) {

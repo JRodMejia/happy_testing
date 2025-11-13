@@ -1,4 +1,3 @@
-import LoginPage from '../../support/pages/LoginPage';
 import DishesPage from '../../support/pages/DishesPage';
 import NewDishPage from '../../support/pages/NewDishPage';
 

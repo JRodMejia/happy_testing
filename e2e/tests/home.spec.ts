@@ -10,7 +10,7 @@ test.describe('Home Page - Positive Tests', () => {
     await homePage.goto();
   });
 
-  test('should display home page elements correctly', async ({ page }) => {
+  test('should display home page elements correctly', async () => {
     await expect(homePage.homeHeading).toBeVisible();
     await expect(homePage.homeHeading).toHaveText('Welcome to NutriApp!');
     await expect(homePage.homeDescription).toBeVisible();
@@ -19,7 +19,7 @@ test.describe('Home Page - Positive Tests', () => {
     await expect(homePage.loginButton).toBeVisible();
   });
 
-  test('should display test credentials', async ({ page }) => {
+  test('should display test credentials', async () => {
     await expect(homePage.testEmailValue).toHaveText('test@nutriapp.com');
     await expect(homePage.testPasswordValue).toHaveText('nutriapp123');
   });
@@ -33,7 +33,7 @@ test.describe('Home Page - Positive Tests', () => {
     await expect(loginPage.loginHeading).toBeVisible();
   });
 
-  test('should have correct link href for login button', async ({ page }) => {
+  test('should have correct link href for login button', async () => {
     const loginButton = homePage.loginButton;
     await expect(loginButton).toHaveAttribute('href', '/login');
   });
