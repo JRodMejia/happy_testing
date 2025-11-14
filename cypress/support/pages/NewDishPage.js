@@ -33,6 +33,21 @@ class NewDishPage {
       this.elements.quickPrepCheckbox().check();
     }
     if (dishData.imageUrl) this.elements.imageUrlInput().clear().type(dishData.imageUrl);
+    
+    // Add at least one preparation step (required field)
+    if (dishData.steps && dishData.steps.length > 0) {
+      dishData.steps.forEach((step, index) => {
+        if (index > 0) {
+          // Click "Add step" button for additional steps
+          cy.contains('button', '+ Agregar paso').click();
+        }
+        // Find step inputs by placeholder pattern
+        cy.get(`input[placeholder*="Paso ${index + 1}"]`).clear().type(step);
+      });
+    } else {
+      // If no steps provided, add a default one
+      cy.get('input[placeholder*="Paso 1"]').clear().type('Preparar el platillo según las instrucciones');
+    }
   }
 
   submitForm() {

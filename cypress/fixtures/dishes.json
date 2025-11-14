@@ -5,7 +5,12 @@
     "prepTime": 15,
     "cookTime": 10,
     "quickPrep": true,
-    "imageUrl": "https://example.com/caesar-salad.jpg"
+    "imageUrl": "https://example.com/caesar-salad.jpg",
+    "steps": [
+      "Lavar y cortar la lechuga",
+      "Cocinar el pollo a la plancha",
+      "Mezclar con el aderezo césar"
+    ]
   },
   "anotherDish": {
     "name": "Pollo Asado",
@@ -13,7 +18,12 @@
     "prepTime": 20,
     "cookTime": 45,
     "quickPrep": false,
-    "imageUrl": "https://example.com/grilled-chicken.jpg"
+    "imageUrl": "https://example.com/grilled-chicken.jpg",
+    "steps": [
+      "Marinar el pollo por 30 minutos",
+      "Precalentar el horno a 180°C",
+      "Hornear por 45 minutos"
+    ]
   },
   "updatedDish": {
     "name": "Ensalada César Premium",

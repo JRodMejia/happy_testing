@@ -63,19 +63,19 @@ export default function NewDishForm() {
   };
 
   return (
-    <form className="bg-white rounded-2xl shadow-2xl p-10 grid grid-cols-1 md:grid-cols-2 gap-10 border border-gray-100" onSubmit={handleSubmit} autoComplete="on">
+    <form data-testid="new-dish-form-container" className="bg-white rounded-2xl shadow-2xl p-10 grid grid-cols-1 md:grid-cols-2 gap-10 border border-gray-100" onSubmit={handleSubmit} autoComplete="on">
       <div className="flex flex-col gap-6">
         <h2 className="text-xl font-bold text-green-600 mb-2">Información básica</h2>
         <div>
           <label className="block mb-1 font-semibold text-gray-700">Nombre</label>
-          <input name="name" value={form.name} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-green-200 focus:outline-none" required autoFocus placeholder="Ej: Ensalada de quinoa" />
+          <input data-testid="dish-name-input" name="name" value={form.name} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-green-200 focus:outline-none" required autoFocus placeholder="Ej: Ensalada de quinoa" />
         </div>
         <div>
           <label className="block mb-1 font-semibold text-gray-700">Descripción</label>
-          <textarea name="description" value={form.description} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-green-200 focus:outline-none" required placeholder="Describe el platillo, ingredientes principales, etc." />
+          <textarea data-testid="dish-description-input" name="description" value={form.description} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-green-200 focus:outline-none" required placeholder="Describe el platillo, ingredientes principales, etc." />
         </div>
         <div className="flex items-center gap-2">
-          <input type="checkbox" name="quickPrep" checked={form.quickPrep} onChange={handleChange} id="quickPrep" className="accent-green-500 w-5 h-5" />
+          <input data-testid="dish-quick-prep-checkbox" type="checkbox" name="quickPrep" checked={form.quickPrep} onChange={handleChange} id="quickPrep" className="accent-green-500 w-5 h-5" />
           <label htmlFor="quickPrep" className="font-semibold text-gray-700">Preparación rápida</label>
           <span className="text-xs text-gray-400 ml-2">Menos de 20 min</span>
         </div>
@@ -85,11 +85,11 @@ export default function NewDishForm() {
         <div className="flex gap-4">
           <div className="flex-1">
             <label className="block mb-1 font-semibold text-gray-700">Min. preparación</label>
-            <input type="number" name="prepTime" value={form.prepTime} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-green-200 focus:outline-none" required min="0" placeholder="Ej: 10" />
+            <input data-testid="dish-prep-time-input" type="number" name="prepTime" value={form.prepTime} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-green-200 focus:outline-none" required min="0" placeholder="Ej: 10" />
           </div>
           <div className="flex-1">
             <label className="block mb-1 font-semibold text-gray-700">Min. cocción</label>
-            <input type="number" name="cookTime" value={form.cookTime} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-green-200 focus:outline-none" required min="0" placeholder="Ej: 15" />
+            <input data-testid="dish-cook-time-input" type="number" name="cookTime" value={form.cookTime} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-green-200 focus:outline-none" required min="0" placeholder="Ej: 15" />
           </div>
         </div>
         <div>
@@ -98,7 +98,7 @@ export default function NewDishForm() {
         </div>
         <div>
           <label className="block mb-1 font-semibold text-gray-700">URL de imagen</label>
-          <input name="imageUrl" value={form.imageUrl} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-green-200 focus:outline-none" placeholder="https://..." />
+          <input data-testid="dish-image-url-input" name="imageUrl" value={form.imageUrl} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-3 text-lg focus:ring-2 focus:ring-green-200 focus:outline-none" placeholder="https://..." />
         </div>
       </div>
       <div className="md:col-span-2 mt-4">
@@ -122,10 +122,15 @@ export default function NewDishForm() {
         <button type="button" onClick={addStep} className="text-blue-500 font-semibold mt-2">+ Agregar paso</button>
       </div>
       <div className="md:col-span-2 mt-4">
-        {error && <p className="text-red-500 mb-2">{error}</p>}
-        <button type="submit" className="w-full bg-green-500 text-white py-3 rounded-xl font-bold text-lg hover:bg-green-600 transition shadow focus:outline-none focus:ring-2 focus:ring-green-300" disabled={loading}>
-          {loading ? 'Guardando...' : 'Guardar'}
-        </button>
+        {error && <p data-testid="dish-error-message" className="text-red-500 mb-2">{error}</p>}
+        <div className="flex gap-4">
+          <button data-testid="dish-submit-button" type="submit" className="flex-1 bg-green-500 text-white py-3 rounded-xl font-bold text-lg hover:bg-green-600 transition shadow focus:outline-none focus:ring-2 focus:ring-green-300" disabled={loading}>
+            {loading ? 'Guardando...' : 'Guardar'}
+          </button>
+          <button data-testid="dish-cancel-button" type="button" onClick={() => router.push('/dishes')} className="flex-1 bg-gray-300 text-gray-700 py-3 rounded-xl font-bold text-lg hover:bg-gray-400 transition shadow focus:outline-none focus:ring-2 focus:ring-gray-400">
+            Cancelar
+          </button>
+        </div>
       </div>
     </form>
   );

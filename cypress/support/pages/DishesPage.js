@@ -44,6 +44,10 @@ class DishesPage {
     this.elements.dishesList().should('contain', dishName);
   }
 
+  verifyDishNotExists(dishName) {
+    this.elements.dishesList().should('not.contain', dishName);
+  }
+
   clickViewDish(index = 0) {
     this.elements.dishViewButton(index).click();
   }
@@ -52,16 +56,24 @@ class DishesPage {
     this.elements.dishEditButton(index).click();
   }
 
+  clickEditDishByName(dishName) {
+    cy.contains('[data-testid^="dish-name-"]', dishName)
+      .parents('[data-testid^="dish-card-"]')
+      .within(() => {
+        cy.get('[data-testid^="dish-edit-button-"]').click();
+      });
+  }
+
   clickDeleteDish(index = 0) {
     this.elements.dishDeleteButton(index).click();
   }
 
   confirmDelete() {
-    this.elements.deleteConfirmButton().click();
+    // No modal confirmation - deletion is immediate
   }
 
   cancelDelete() {
-    this.elements.deleteCancelButton().click();
+    // No modal confirmation - deletion is immediate
   }
 
   getDishCount() {

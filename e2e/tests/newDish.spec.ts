@@ -16,7 +16,7 @@ test.describe('New Dish Page - Positive Tests', () => {
     await newDishPage.goto();
   });
 
-  test('should display new dish page elements correctly', async ({ page }) => {
+  test('should display new dish page elements correctly', async () => {
     await expect(newDishPage.newDishHeading).toBeVisible();
     await expect(newDishPage.newDishHeading).toHaveText('Agregar Platillo');
     await expect(newDishPage.newDishFormContainer).toBeVisible();

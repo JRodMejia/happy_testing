@@ -81,12 +81,12 @@ export default function EditDishForm({ id }: { id: string }) {
           <h2 className="font-extrabold text-2xl mb-2 text-gray-800 text-center">{form.name}</h2>
           <p className="text-gray-600 mb-4 text-center">{form.description}</p>
         </div>
-        <form className="bg-white rounded-2xl shadow-lg p-8 flex-1 flex flex-col gap-6" onSubmit={handleSubmit}>
+        <form data-testid="edit-dish-form-container" className="bg-white rounded-2xl shadow-lg p-8 flex-1 flex flex-col gap-6" onSubmit={handleSubmit}>
           <h3 className="text-xl font-bold mb-2 text-green-600">Editar información</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block mb-1 font-semibold">Nombre</label>
-              <input name="name" value={form.name} onChange={handleChange} className="w-full border rounded p-3 text-lg" required placeholder="Nombre del platillo" />
+              <input data-testid="dish-name-input" name="name" value={form.name} onChange={handleChange} className="w-full border rounded p-3 text-lg" required placeholder="Nombre del platillo" />
             </div>
             <div>
               <label className="block mb-1 font-semibold">Calorías totales</label>
@@ -94,23 +94,23 @@ export default function EditDishForm({ id }: { id: string }) {
             </div>
             <div className="md:col-span-2">
               <label className="block mb-1 font-semibold">Descripción</label>
-              <textarea name="description" value={form.description} onChange={handleChange} className="w-full border rounded p-3 text-lg" required placeholder="Descripción del platillo" />
+              <textarea data-testid="dish-description-input" name="description" value={form.description} onChange={handleChange} className="w-full border rounded p-3 text-lg" required placeholder="Descripción del platillo" />
             </div>
             <div>
               <label className="block mb-1 font-semibold">Min. preparación</label>
-              <input type="number" name="prepTime" value={form.prepTime} onChange={handleChange} className="w-full border rounded p-3 text-lg" required />
+              <input data-testid="dish-prep-time-input" type="number" name="prepTime" value={form.prepTime} onChange={handleChange} className="w-full border rounded p-3 text-lg" required />
             </div>
             <div>
               <label className="block mb-1 font-semibold">Min. cocción</label>
-              <input type="number" name="cookTime" value={form.cookTime} onChange={handleChange} className="w-full border rounded p-3 text-lg" required />
+              <input data-testid="dish-cook-time-input" type="number" name="cookTime" value={form.cookTime} onChange={handleChange} className="w-full border rounded p-3 text-lg" required />
             </div>
             <div className="md:col-span-2 flex items-center gap-2">
-              <input type="checkbox" name="quickPrep" checked={form.quickPrep} onChange={handleChange} />
+              <input data-testid="dish-quick-prep-checkbox" type="checkbox" name="quickPrep" checked={form.quickPrep} onChange={handleChange} />
               <label className="font-semibold">Preparación rápida</label>
             </div>
             <div className="md:col-span-2">
               <label className="block mb-1 font-semibold">URL de imagen</label>
-              <input name="imageUrl" value={form.imageUrl || ''} onChange={handleChange} className="w-full border rounded p-3 text-lg" placeholder="URL de imagen" />
+              <input data-testid="dish-image-url-input" name="imageUrl" value={form.imageUrl || ''} onChange={handleChange} className="w-full border rounded p-3 text-lg" placeholder="URL de imagen" />
             </div>
           </div>
           <div className="mt-2">
@@ -132,10 +132,15 @@ export default function EditDishForm({ id }: { id: string }) {
             ))}
             <button type="button" onClick={addStep} className="text-blue-500 font-semibold mt-2">+ Agregar paso</button>
           </div>
-          {error && <p className="text-red-500">{error}</p>}
-          <button type="submit" className="w-full bg-green-500 text-white py-3 rounded-xl font-bold text-lg hover:bg-green-600 transition mt-4" disabled={loading}>
-            {loading ? 'Guardando...' : 'Guardar'}
-          </button>
+          {error && <p data-testid="dish-error-message" className="text-red-500">{error}</p>}
+          <div className="flex gap-4 mt-4">
+            <button data-testid="dish-submit-button" type="submit" className="flex-1 bg-green-500 text-white py-3 rounded-xl font-bold text-lg hover:bg-green-600 transition" disabled={loading}>
+              {loading ? 'Guardando...' : 'Guardar'}
+            </button>
+            <button data-testid="dish-cancel-button" type="button" onClick={() => router.push('/dishes')} className="flex-1 bg-gray-300 text-gray-700 py-3 rounded-xl font-bold text-lg hover:bg-gray-400 transition">
+              Cancelar
+            </button>
+          </div>
         </form>
       </div>
     </div>

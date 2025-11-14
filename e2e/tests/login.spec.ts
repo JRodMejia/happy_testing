@@ -11,7 +11,7 @@ test.describe('Login Page - Positive Tests', () => {
     await loginPage.goto();
   });
 
-  test('should display login page elements correctly', async ({ page }) => {
+  test('should display login page elements correctly', async () => {
     await expect(loginPage.nutriappTitle).toBeVisible();
     await expect(loginPage.loginHeading).toHaveText('Bienvenido');
     await expect(loginPage.emailInput).toBeVisible();
@@ -35,7 +35,7 @@ test.describe('Login Page - Positive Tests', () => {
     await expect(page).toHaveURL(/.*\/register/);
   });
 
-  test('should show loading state when submitting', async ({ page }) => {
+  test('should show loading state when submitting', async () => {
     await loginPage.emailInput.fill(testUsers.valid.email);
     await loginPage.passwordInput.fill(testUsers.valid.password);
     
@@ -52,14 +52,14 @@ test.describe('Login Page - Negative Tests', () => {
     await loginPage.goto();
   });
 
-  test('should show error with invalid credentials', async ({ page }) => {
+  test('should show error with invalid credentials', async () => {
     await loginPage.login(testUsers.invalid.email, testUsers.invalid.password);
     
     await expect(loginPage.errorMessage).toBeVisible();
     await expect(loginPage.errorMessage).toContainText(/Credenciales incorrectas/i);
   });
 
-  test('should show error with empty email', async ({ page }) => {
+  test('should show error with empty email', async () => {
     await loginPage.passwordInput.fill(testUsers.valid.password);
     await loginPage.loginButton.click();
     
@@ -67,14 +67,14 @@ test.describe('Login Page - Negative Tests', () => {
     await expect(loginPage.emailInput).toHaveAttribute('required', '');
   });
 
-  test('should show error with empty password', async ({ page }) => {
+  test('should show error with empty password', async () => {
     await loginPage.emailInput.fill(testUsers.valid.email);
     await loginPage.loginButton.click();
     
     await expect(loginPage.passwordInput).toHaveAttribute('required', '');
   });
 
-  test('should show error with invalid email format', async ({ page }) => {
+  test('should show error with invalid email format', async () => {
     await loginPage.emailInput.fill('invalid-email');
     await loginPage.passwordInput.fill(testUsers.valid.password);
     
@@ -90,7 +90,7 @@ test.describe('Login Page - Negative Tests', () => {
     await expect(page).toHaveURL(/.*\/login/);
   });
 
-  test('should disable button while loading', async ({ page }) => {
+  test('should disable button while loading', async () => {
     await loginPage.emailInput.fill(testUsers.valid.email);
     await loginPage.passwordInput.fill(testUsers.valid.password);
     await loginPage.loginButton.click();

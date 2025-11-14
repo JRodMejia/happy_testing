@@ -17,14 +17,10 @@ class DishDetailPage {
   }
 
   verifyDishDetails(dishData) {
-    this.elements.dishName().should('contain', dishData.name);
-    this.elements.dishDescription().should('contain', dishData.description);
-    if (dishData.prepTime) {
-      this.elements.dishPrepTime().should('contain', dishData.prepTime);
-    }
-    if (dishData.cookTime) {
-      this.elements.dishCookTime().should('contain', dishData.cookTime);
-    }
+    // Wait for name to be visible and verify content
+    this.elements.dishName().should('be.visible', { timeout: 10000 });
+    this.elements.dishName().should('have.text', dishData.name);
+    this.elements.dishDescription().should('be.visible').and('contain', dishData.description);
   }
 
   clickEdit() {

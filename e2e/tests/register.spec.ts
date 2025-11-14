@@ -11,7 +11,7 @@ test.describe('Register Page - Positive Tests', () => {
     await registerPage.goto();
   });
 
-  test('should display register page elements correctly', async ({ page }) => {
+  test('should display register page elements correctly', async () => {
     await expect(registerPage.registerHeading).toHaveText('Crear cuenta');
     await expect(registerPage.firstNameInput).toBeVisible();
     await expect(registerPage.lastNameInput).toBeVisible();
@@ -42,7 +42,7 @@ test.describe('Register Page - Positive Tests', () => {
     await expect(page).toHaveURL(/.*\/login/);
   });
 
-  test('should show loading state when submitting', async ({ page }) => {
+  test('should show loading state when submitting', async () => {
     const newUser = {
       ...testUsers.newUser,
       email: `test${Date.now()}@example.com`

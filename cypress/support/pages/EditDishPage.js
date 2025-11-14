@@ -7,7 +7,7 @@ class EditDishPage {
     cookTimeInput: () => cy.getByTestId('dish-cook-time-input'),
     quickPrepCheckbox: () => cy.getByTestId('dish-quick-prep-checkbox'),
     imageUrlInput: () => cy.getByTestId('dish-image-url-input'),
-    updateButton: () => cy.getByTestId('dish-update-button'),
+    updateButton: () => cy.getByTestId('dish-submit-button'),
     cancelButton: () => cy.getByTestId('dish-cancel-button'),
     errorMessage: () => cy.getByTestId('dish-error-message')
   };
@@ -18,6 +18,10 @@ class EditDishPage {
 
   verifyEditPageLoaded() {
     this.elements.editDishHeading().should('be.visible').and('contain', 'Editar Platillo');
+  }
+
+  verifyDishName(expectedName) {
+    this.elements.nameInput().should('have.value', expectedName);
   }
 
   updateDishField(field, value) {
@@ -42,15 +46,42 @@ class EditDishPage {
         }
         break;
       case 'imageUrl':
-        this.elements.imageUrlInput().clear().type(value);
+        this.elements.imageUrlInput().clear();
+        if (value) {
+          this.elements.imageUrlInput().type(value);
+        }
         break;
     }
   }
 
   updateDish(dishData) {
-    Object.keys(dishData).forEach(key => {
-      this.updateDishField(key, dishData[key]);
-    });
+    // Only update fields that are provided
+    if (dishData.name !== undefined) {
+      this.elements.nameInput().clear().type(dishData.name);
+    }
+    if (dishData.description !== undefined) {
+      this.elements.descriptionInput().clear().type(dishData.description);
+    }
+    if (dishData.prepTime !== undefined) {
+      this.elements.prepTimeInput().clear().type(dishData.prepTime.toString());
+    }
+    if (dishData.cookTime !== undefined) {
+      this.elements.cookTimeInput().clear().type(dishData.cookTime.toString());
+    }
+    if (dishData.quickPrep !== undefined) {
+      if (dishData.quickPrep) {
+        this.elements.quickPrepCheckbox().check();
+      } else {
+        this.elements.quickPrepCheckbox().uncheck();
+      }
+    }
+    if (dishData.imageUrl !== undefined) {
+      this.elements.imageUrlInput().clear();
+      if (dishData.imageUrl) {
+        this.elements.imageUrlInput().type(dishData.imageUrl);
+      }
+    }
+    
     this.elements.updateButton().click();
   }
 

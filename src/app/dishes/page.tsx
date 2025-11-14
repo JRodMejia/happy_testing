@@ -39,9 +39,7 @@ export default async function DishesPage() {
           <span className="text-lg text-gray-500" data-testid="dishes-empty-text">No hay platillos registrados.</span>
         </div>
       ) : (
-        <div data-testid="dishes-list">
-          <DishesClientList dishes={dishes} />
-        </div>
+        <DishesClientList dishes={dishes} />
       )}
     </div>
   );
