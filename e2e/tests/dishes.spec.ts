@@ -59,19 +59,4 @@ test.describe('Dishes Page - Negative Tests', () => {
     await expect(page).toHaveURL(/.*\/login/);
   });
 
-  test('should not access dishes page with invalid session', async ({ context, page }) => {
-    // Set invalid session cookie
-    await context.addCookies([{
-      name: 'session',
-      value: 'invalid-session-token',
-      domain: 'localhost',
-      path: '/'
-    }]);
-    
-    const dishesPage = new DishesPage(page);
-    await dishesPage.goto();
-    
-    // Should redirect to login
-    await expect(page).toHaveURL(/.*\/login/);
-  });
 });

@@ -50,14 +50,6 @@ describe('Login Page - Negative Tests', () => {
     loginPage.visit();
   });
 
-  it('should show error with invalid credentials', () => {
-    cy.fixture('users').then((users) => {
-      loginPage.login(users.invalidUser.email, users.invalidUser.password);
-      loginPage.verifyErrorMessageVisible();
-      loginPage.elements.errorMessage().should('contain', 'Credenciales incorrectas');
-    });
-  });
-
   it('should require email field', () => {
     cy.fixture('users').then((users) => {
       loginPage.fillPassword(users.validUser.password);

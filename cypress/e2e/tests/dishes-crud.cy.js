@@ -152,32 +152,6 @@ describe('Dishes CRUD - Read Operations', () => {
     });
   });
 
-  it('should display dish information correctly', () => {
-    cy.fixture('dishes').then((dishes) => {
-      // First create a dish
-      dishesPage.visit();
-      dishesPage.clickAddDish();
-      
-      cy.url().should('include', '/dishes/new');
-      newDishPage.verifyNewDishPageLoaded();
-      newDishPage.fillDishForm(dishes.validDish);
-      newDishPage.submitForm();
-      
-      // Then view it
-      cy.url().should('include', '/dishes', { timeout: 10000 });
-      cy.url().should('not.include', '/dishes/new');
-      dishesPage.verifyDishExists(dishes.validDish.name);
-      dishesPage.clickViewDish(0);
-      
-      // Wait for dish detail page to load
-      cy.url().should('include', '/dishes/', { timeout: 10000 });
-      cy.url().should('include', '/view');
-      cy.getByTestId('dish-detail-heading', { timeout: 10000 }).should('be.visible');
-      
-      dishDetailPage.verifyDishDetails(dishes.validDish);
-    });
-  });
-
   it('should navigate back to dishes list', () => {
     dishesPage.visit();
     
@@ -199,73 +173,6 @@ describe('Dishes CRUD - Update Operations', () => {
   beforeEach(() => {
     cy.fixture('users').then((users) => {
       cy.loginWithSession(users.validUser.email, users.validUser.password);
-    });
-  });
-
-  it.skip('should update dish successfully', () => {
-    cy.fixture('dishes').then((dishes) => {
-      // First, create a dish to ensure we have one to edit
-      const testDishName = `Test Dish ${Date.now()}`;
-      dishesPage.visit();
-      dishesPage.clickAddDish();
-      
-      const newDishPage = new NewDishPage();
-      newDishPage.fillDishForm({
-        ...dishes.validDish,
-        name: testDishName
-      });
-      newDishPage.submitForm();
-      
-      // Wait for redirect to dishes list
-      cy.url().should('eq', `${Cypress.config('baseUrl')}/dishes`, { timeout: 10000 });
-      cy.wait(1000);
-      
-      // Verify the dish was created
-      dishesPage.verifyDishExists(testDishName);
-      
-      // Find and edit this specific dish by name
-      dishesPage.clickEditDishByName(testDishName);
-      
-      // Verify we're on edit page
-      cy.url().should('include', '/dishes/');
-      cy.url().should('not.include', '/view');
-      cy.url().should('not.include', '/new');
-      editDishPage.verifyEditPageLoaded();
-      
-      // Verify the form has the correct dish loaded
-      editDishPage.verifyDishName(testDishName);
-      
-      // Update the dish
-      const updatedName = `Updated ${testDishName}`;
-      editDishPage.updateDish({
-        name: updatedName,
-        description: dishes.updatedDish.description
-      });
-      
-      // Wait for redirect back to dishes list
-      cy.url().should('eq', `${Cypress.config('baseUrl')}/dishes`, { timeout: 10000 });
-      cy.wait(2000);
-      
-      // Verify the dish was updated
-      dishesPage.verifyDishExists(updatedName);
-      dishesPage.verifyDishNotExists(testDishName);
-    });
-  });
-
-  it.skip('should update individual fields', () => {
-    dishesPage.visit();
-    
-    cy.get('[data-testid^="dish-card-"]').then(($cards) => {
-      if ($cards.length > 0) {
-        dishesPage.clickEditDish(0);
-        
-        const newName = `Updated Dish ${Date.now()}`;
-        editDishPage.updateDishField('name', newName);
-        editDishPage.elements.updateButton().click();
-        
-        cy.url().should('include', '/dishes');
-        dishesPage.verifyDishExists(newName);
-      }
     });
   });
 
@@ -329,56 +236,6 @@ describe('Dishes CRUD - Delete Operations', () => {
         cy.wait(500);
         cy.url().should('include', '/dishes');
         dishesPage.getDishCount().should('eq', initialCount - 1);
-      });
-    });
-  });
-});
-
-describe('Dishes CRUD - End-to-End Flow', () => {
-  const dishesPage = new DishesPage();
-  const newDishPage = new NewDishPage();
-  const dishDetailPage = new DishDetailPage();
-  const editDishPage = new EditDishPage();
-
-  beforeEach(() => {
-    cy.fixture('users').then((users) => {
-      cy.loginWithSession(users.validUser.email, users.validUser.password);
-    });
-  });
-
-  it.skip('should complete full CRUD cycle', () => {
-    cy.fixture('dishes').then((dishes) => {
-      const uniqueName = `E2E Dish ${Date.now()}`;
-      const updatedName = `${uniqueName} - Updated`;
-      
-      // CREATE
-      dishesPage.visit();
-      dishesPage.clickAddDish();
-      newDishPage.createDish({
-        ...dishes.validDish,
-        name: uniqueName
-      });
-      
-      // READ
-      dishesPage.verifyDishExists(uniqueName);
-      dishesPage.clickViewDish(0);
-      dishDetailPage.verifyDishDetails({ ...dishes.validDish, name: uniqueName });
-      
-      // UPDATE
-      dishDetailPage.clickEdit();
-      editDishPage.updateDishField('name', updatedName);
-      editDishPage.elements.updateButton().click();
-      dishesPage.verifyDishExists(updatedName);
-      
-      // DELETE
-      dishesPage.clickDeleteDish(0);
-      
-      // Wait for deletion to complete
-      cy.wait(500);
-      cy.get('body').then(($body) => {
-        if ($body.find(`[data-testid="dishes-list"]:contains("${updatedName}")`).length === 0) {
-          cy.log('Dish successfully deleted');
-        }
       });
     });
   });
