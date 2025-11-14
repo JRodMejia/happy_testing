@@ -116,7 +116,6 @@ describe('Dishes CRUD - Create Operations', () => {
 
 describe('Dishes CRUD - Read Operations', () => {
   const dishesPage = new DishesPage();
-  const newDishPage = new NewDishPage();
   const dishDetailPage = new DishDetailPage();
 
   beforeEach(() => {

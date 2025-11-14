@@ -68,7 +68,7 @@ test.describe('Register Page - Negative Tests', () => {
     await registerPage.goto();
   });
 
-  test('should show error when registering with existing email', async ({ page }) => {
+  test('should show error when registering with existing email', async () => {
     await registerPage.register({
       ...testUsers.newUser,
       email: testUsers.valid.email // existing user
@@ -77,7 +77,7 @@ test.describe('Register Page - Negative Tests', () => {
     await expect(registerPage.errorMessage).toBeVisible();
   });
 
-  test('should require all fields to be filled', async ({ page }) => {
+  test('should require all fields to be filled', async () => {
     await registerPage.registerButton.click();
     
     await expect(registerPage.firstNameInput).toHaveAttribute('required', '');
@@ -88,7 +88,7 @@ test.describe('Register Page - Negative Tests', () => {
     await expect(registerPage.passwordInput).toHaveAttribute('required', '');
   });
 
-  test('should validate email format', async ({ page }) => {
+  test('should validate email format', async () => {
     await registerPage.firstNameInput.fill(testUsers.newUser.firstName);
     await registerPage.lastNameInput.fill(testUsers.newUser.lastName);
     await registerPage.emailInput.fill('invalid-email');
@@ -100,7 +100,7 @@ test.describe('Register Page - Negative Tests', () => {
     expect(isInvalid).toBeTruthy();
   });
 
-  test('should not register with missing first name', async ({ page }) => {
+  test('should not register with missing first name', async () => {
     await registerPage.register({
       firstName: '',
       lastName: testUsers.newUser.lastName,
@@ -113,7 +113,7 @@ test.describe('Register Page - Negative Tests', () => {
     await expect(registerPage.firstNameInput).toHaveAttribute('required', '');
   });
 
-  test('should not register with missing last name', async ({ page }) => {
+  test('should not register with missing last name', async () => {
     await registerPage.register({
       firstName: testUsers.newUser.firstName,
       lastName: '',
@@ -126,7 +126,7 @@ test.describe('Register Page - Negative Tests', () => {
     await expect(registerPage.lastNameInput).toHaveAttribute('required', '');
   });
 
-  test('should disable button while loading', async ({ page }) => {
+  test('should disable button while loading', async () => {
     const newUser = {
       ...testUsers.newUser,
       email: `test${Date.now()}@example.com`
