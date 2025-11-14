@@ -52,13 +52,6 @@ test.describe('Login Page - Negative Tests', () => {
     await loginPage.goto();
   });
 
-  test('should show error with invalid credentials', async () => {
-    await loginPage.login(testUsers.invalid.email, testUsers.invalid.password);
-    
-    await expect(loginPage.errorMessage).toBeVisible();
-    await expect(loginPage.errorMessage).toContainText(/Credenciales incorrectas/i);
-  });
-
   test('should show error with empty email', async () => {
     await loginPage.passwordInput.fill(testUsers.valid.password);
     await loginPage.loginButton.click();

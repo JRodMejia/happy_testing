@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage';
 import { DishesPage } from '../pages/DishesPage';
+import { NewDishPage } from '../pages/NewDishPage';
 import { testUsers } from '../helpers/testData';
 
 test.describe('Dishes CRUD - Create Operations', () => {
@@ -12,22 +13,43 @@ test.describe('Dishes CRUD - Create Operations', () => {
 
   test('should create a new dish successfully', async ({ page }) => {
     const dishesPage = new DishesPage(page);
-    await dishesPage.goto();
-    await dishesPage.clickAddDish();
+    const newDishPage = new NewDishPage(page);
     
+    // Navigate to dishes page
+    await expect(page).toHaveURL(/.*\/dishes$/);
+    await dishesPage.goto();
+    
+    // Click Add Dish button
+    await dishesPage.clickAddDish();
     await expect(page).toHaveURL(/.*\/dishes\/new/);
     
-    await page.getByTestId('dish-name-input').fill('Ensalada César');
-    await page.getByTestId('dish-description-input').fill('Ensalada fresca');
-    await page.getByTestId('dish-prep-time-input').fill('15');
-    await page.getByTestId('dish-cook-time-input').fill('10');
-    await page.getByTestId('dish-submit-button').click();
+    // Fill the form with all required data including preparation steps
+    await newDishPage.fillDishForm({
+      name: 'Ensalada César',
+      description: 'Ensalada fresca con pollo y aderezo césar',
+      prepTime: 15,
+      cookTime: 10,
+      quickPrep: true,
+      imageUrl: 'https://example.com/caesar-salad.jpg',
+      steps: [
+        'Lavar y cortar la lechuga',
+        'Cocinar el pollo a la plancha',
+        'Mezclar con el aderezo césar'
+      ]
+    });
     
+    // Submit the form
+    await newDishPage.submitForm();
+    
+    // Verify navigation to dishes page
     await expect(page).toHaveURL(/.*\/dishes$/);
+    
+    // Verify the new dish is visible
     await expect(page.getByText('Ensalada César')).toBeVisible();
   });
 
   test('should require name field', async ({ page }) => {
+    await expect(page).toHaveURL(/.*\/dishes$/);
     await page.goto('/dishes/new');
     
     const nameInput = page.getByTestId('dish-name-input');
@@ -44,8 +66,7 @@ test.describe('Dishes CRUD - Read Operations', () => {
 
   test('should display list of dishes', async ({ page }) => {
     const dishesPage = new DishesPage(page);
-    await dishesPage.goto();
-    
+    await expect(page).toHaveURL(/.*\/dishes$/);
     const hasEmptyState = await dishesPage.isEmptyStateVisible();
     const hasDishesList = await dishesPage.isDishesListVisible();
     
