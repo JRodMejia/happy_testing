@@ -32,4 +32,28 @@ export class DishesPage {
   async isDishesListVisible() {
     return await this.dishesList.isVisible();
   }
+
+  async clickViewDish(index: number) {
+    await this.page.getByTestId(`dish-view-button-${index}`).click();
+  }
+
+  async clickEditDish(index: number) {
+    await this.page.getByTestId(`dish-edit-button-${index}`).click();
+  }
+
+  async clickDeleteDish(index: number) {
+    await this.page.getByTestId(`dish-delete-button-${index}`).click();
+  }
+
+  async getDishNameByIndex(index: number) {
+    return await this.page.getByTestId(`dish-name-${index}`).textContent();
+  }
+
+  async verifyDishExists(dishName: string) {
+    await this.page.getByText(dishName).waitFor({ state: 'visible' });
+  }
+
+  async verifyDishNotExists(dishName: string) {
+    await this.page.getByText(dishName, { exact: true }).waitFor({ state: 'detached', timeout: 5000 });
+  }
 }

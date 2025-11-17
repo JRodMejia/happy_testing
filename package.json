@@ -15,6 +15,7 @@
     "playwright:codegen": "playwright codegen"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.22.0",
     "@prisma/client": "^6.16.2",
     "bcryptjs": "^3.0.2",
     "next": "15.5.4",
