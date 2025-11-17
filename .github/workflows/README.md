@@ -6,13 +6,15 @@ Create the following structure in your project:
         workflows/
             ci.yml
 
-# Ensure your repository is in GitHub 
+# Ensure your repository is in GitHub.
 
-# Create Cypress and Playwright test cases
+# Create Cypress and Playwright test cases.
 
-# Commit and publish changes to the main branch to trigger the workflow actions
+# Commit and publish changes to the main branch to trigger the workflow actions.
 
 # Once Published, you can got to Github and click on the Actions tab, you'll see the workflows running.
+
+# Cypress will display a summary section when the execution is done. 
 
 # Execution Reports
 
