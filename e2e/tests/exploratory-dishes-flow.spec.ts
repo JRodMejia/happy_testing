@@ -268,7 +268,7 @@ test.describe('Edge Cases and Error Scenarios', () => {
     const loginPage = new LoginPage(page);
     const dishesPage = new DishesPage(page);
     const newDishPage = new NewDishPage(page);
-    
+    //comment
     await loginPage.goto();
     await loginPage.login(testUsers.valid.email, testUsers.valid.password);
     await expect(page).toHaveURL(/.*\/dishes$/);
