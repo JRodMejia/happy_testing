@@ -26,12 +26,3 @@ Click on the ZIP field to downlowd:
     cypress-videos.zip → failure videos
     cypress-screenshots.zip → failure Screenshots
     playwright-report.zip → interactive HTML report
-
-##  GitHub pages for execution report
-        Go to your GitHub repository
-        Settings → Pages 
-        In Source, select: gh-pages branch
-        Click Save
-        After each execution you could see the report on:
-            https://jrodmejia.github.io/happy_testing/reports/[RUN_NUMBER]/
-        Where [RUN_NUMBER] is the execution number (ex: run #42 = .../reports/42/)
