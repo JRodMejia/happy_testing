@@ -12,7 +12,10 @@
     "cypress:run": "cypress run",
     "playwright:test": "playwright test",
     "playwright:open": "playwright test --ui",
-    "playwright:codegen": "playwright codegen"
+    "playwright:codegen": "playwright codegen",
+    "test:api": "playwright test --config=api-tests/config/api.config.ts",
+    "test:api:ui": "playwright test --config=api-tests/config/api.config.ts --ui",
+    "test:api:debug": "playwright test --config=api-tests/config/api.config.ts --debug"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.22.0",

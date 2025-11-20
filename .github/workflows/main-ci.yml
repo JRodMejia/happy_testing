@@ -1,19 +1,65 @@
-name: CI - Full Testing Pipeline (Manual Only)
-
-# This workflow runs ALL tests - use only for manual comprehensive testing
-# For automatic runs, individual workflows are triggered based on file changes:
-# - api-tests.yml (API changes)
-# - cypress-tests.yml (Cypress E2E changes)
-# - playwright-tests.yml (Playwright E2E changes)
+name: Main CI Pipeline
 
 on:
-  workflow_dispatch:  # Manual trigger only
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
 
 jobs:
+  # Detect which files changed to decide which tests to run
+  detect-changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      api: ${{ steps.filter.outputs.api }}
+      cypress: ${{ steps.filter.outputs.cypress }}
+      playwright: ${{ steps.filter.outputs.playwright }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Check file changes
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            api:
+              - 'api-tests/**'
+              - 'src/app/api/**'
+              - 'prisma/**'
+              - 'package.json'
+              - 'package-lock.json'
+            cypress:
+              - 'cypress/**'
+              - 'src/**'
+              - 'prisma/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - 'cypress.config.js'
+            playwright:
+              - 'e2e/**'
+              - 'src/**'
+              - 'prisma/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - 'playwright.config.ts'
+
+  # Run lint once for all workflows
   lint:
     name: Lint Code
     runs-on: ubuntu-latest
-    
+    needs: detect-changes
+    if: |
+      needs.detect-changes.outputs.api == 'true' ||
+      needs.detect-changes.outputs.cypress == 'true' ||
+      needs.detect-changes.outputs.playwright == 'true'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -30,11 +76,14 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
+  # Run build once for UI tests (Cypress and Playwright E2E)
   build:
     name: Build Application
     runs-on: ubuntu-latest
-    needs: lint
-    
+    needs: [detect-changes, lint]
+    if: |
+      needs.detect-changes.outputs.cypress == 'true' ||
+      needs.detect-changes.outputs.playwright == 'true'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -53,10 +102,73 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_test
 
+  # API Tests - runs independently
+  api-tests:
+    name: Playwright API Tests
+    runs-on: ubuntu-latest
+    needs: [detect-changes, lint]
+    if: needs.detect-changes.outputs.api == 'true'
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: nutriapp_api_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Setup database
+        run: |
+          npx prisma generate
+          npx prisma migrate deploy
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_api_test
+      
+      - name: Seed database
+        run: node --loader ts-node/esm seed.ts
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_api_test
+      
+      - name: Run API tests
+        run: npm run test:api
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_api_test
+          CI: true
+      
+      - name: Upload API test report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: api-test-report
+          path: api-test-results/
+          retention-days: 30
+
+  # Cypress E2E Tests
   cypress-tests:
     name: Cypress E2E Tests
     runs-on: ubuntu-latest
-    needs: build
+    needs: [detect-changes, build]
+    if: needs.detect-changes.outputs.cypress == 'true'
     
     services:
       postgres:
@@ -122,10 +234,12 @@ jobs:
           name: cypress-videos
           path: cypress/videos
 
+  # Playwright E2E Tests
   playwright-tests:
     name: Playwright E2E Tests
     runs-on: ubuntu-latest
-    needs: build
+    needs: [detect-changes, build]
+    if: needs.detect-changes.outputs.playwright == 'true'
     
     services:
       postgres:
@@ -165,7 +279,7 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_playwright
       
-      - name: Seed database with fresh data
+      - name: Seed database
         run: node --loader ts-node/esm seed.ts
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_playwright
@@ -186,63 +300,4 @@ jobs:
         with:
           name: playwright-report
           path: playwright-report/
-          retention-days: 30
-
-  playwright-api-tests:
-    name: Playwright API Tests
-    runs-on: ubuntu-latest
-    needs: build
-    
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: nutriapp_api_test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-      
-      - name: Install dependencies
-        run: npm ci
-      
-      - name: Setup database
-        run: |
-          npx prisma generate
-          npx prisma migrate deploy
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_api_test
-      
-      - name: Seed database with test data
-        run: node --loader ts-node/esm seed.ts
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_api_test
-      
-      - name: Run API tests
-        run: npm run test:api
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_api_test
-          CI: true
-      
-      - name: Upload API test report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: api-test-report
-          path: api-test-results/
           retention-days: 30
