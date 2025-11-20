@@ -157,7 +157,7 @@ test.describe('Dishes API', () => {
   });
 
   test.describe('PUT /api/dishes/:id', () => {
-    let dishToUpdate: any;
+    let dishToUpdate: { id: string; name: string };
 
     test.beforeAll(async ({ request }) => {
       // Create a dish to test UPDATE
@@ -204,7 +204,7 @@ test.describe('Dishes API', () => {
   });
 
   test.describe('DELETE /api/dishes/:id', () => {
-    let dishToDelete: any;
+    let dishToDelete: { id: string; name: string };
 
     test.beforeEach(async ({ request }) => {
       // Create a fresh dish to delete for each test

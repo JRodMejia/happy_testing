@@ -10,7 +10,7 @@ test.describe('Authentication API', () => {
   });
 
   test.describe('POST /api/register', () => {
-    test('should register a new user successfully', async ({ request }) => {
+    test('should register a new user successfully', async () => {
       const uniqueEmail = `user_${Date.now()}@test.com`;
       const userData = {
         ...TestUsers.validUser,

@@ -48,7 +48,7 @@ export class ApiClient {
   /**
    * Extracts session cookie from response
    */
-  extractSessionCookie(response: any): string | null {
+  extractSessionCookie(response: { headers: () => Record<string, string> }): string | null {
     const cookies = response.headers()['set-cookie'];
     if (!cookies) return null;
     
