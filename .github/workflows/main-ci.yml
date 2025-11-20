@@ -160,8 +160,11 @@ jobs:
         if: always()
         with:
           name: api-test-report
-          path: api-test-results/
+          path: |
+            api-test-results/html-report/
+            api-test-results/results.json
           retention-days: 30
+          if-no-files-found: warn
 
   # Cypress E2E Tests
   cypress-tests:
