@@ -19,7 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       api: ${{ steps.filter.outputs.api }}
-      cypress: ${{ steps.filter.outputs.cypress }}
+      cypress-api: ${{ steps.filter.outputs.cypress-api }}
+      cypress-e2e: ${{ steps.filter.outputs.cypress-e2e }}
       playwright: ${{ steps.filter.outputs.playwright }}
     steps:
       - name: Checkout code
@@ -36,8 +37,22 @@ jobs:
               - 'prisma/**'
               - 'package.json'
               - 'package-lock.json'
-            cypress:
-              - 'cypress/**'
+            cypress-api:
+              - 'cypress/e2e/api/**'
+              - 'cypress/fixtures/api/**'
+              - 'cypress/support/commands/apiCommands.js'
+              - 'cypress/support/helpers/apiHelpers.js'
+              - 'src/app/api/**'
+              - 'prisma/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - 'cypress.config.js'
+            cypress-e2e:
+              - 'cypress/e2e/tests/**'
+              - 'cypress/fixtures/*.json'
+              - 'cypress/support/commands/commonCommands.js'
+              - 'cypress/support/commands/loginCommands.js'
+              - 'cypress/support/pages/**'
               - 'src/**'
               - 'prisma/**'
               - 'package.json'
@@ -58,7 +73,8 @@ jobs:
     needs: detect-changes
     if: |
       needs.detect-changes.outputs.api == 'true' ||
-      needs.detect-changes.outputs.cypress == 'true' ||
+      needs.detect-changes.outputs.cypress-api == 'true' ||
+      needs.detect-changes.outputs.cypress-e2e == 'true' ||
       needs.detect-changes.outputs.playwright == 'true'
     steps:
       - name: Checkout code
@@ -76,13 +92,13 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
-  # Run build once for UI tests (Cypress and Playwright E2E)
+  # Run build once for UI tests (Cypress E2E and Playwright E2E)
   build:
     name: Build Application
     runs-on: ubuntu-latest
     needs: [detect-changes, lint]
     if: |
-      needs.detect-changes.outputs.cypress == 'true' ||
+      needs.detect-changes.outputs.cypress-e2e == 'true' ||
       needs.detect-changes.outputs.playwright == 'true'
     steps:
       - name: Checkout code
@@ -166,12 +182,12 @@ jobs:
           retention-days: 30
           if-no-files-found: warn
 
-  # Cypress E2E Tests
-  cypress-tests:
-    name: Cypress E2E Tests
+  # Cypress API Tests
+  cypress-api-tests:
+    name: Cypress API Tests
     runs-on: ubuntu-latest
-    needs: [detect-changes, build]
-    if: needs.detect-changes.outputs.cypress == 'true'
+    needs: [detect-changes, lint]
+    if: needs.detect-changes.outputs.cypress-api == 'true'
     
     services:
       postgres:
@@ -179,7 +195,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: nutriapp_test
+          POSTGRES_DB: nutriapp_cypress_api
         ports:
           - 5432:5432
         options: >-
@@ -206,14 +222,13 @@ jobs:
           npx prisma generate
           npx prisma migrate deploy
         env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_test
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_cypress_api
       
       - name: Seed database
         run: node --loader ts-node/esm seed.ts
         env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_test
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_cypress_api
       
-      # Run API tests first (faster, no browser needed)
       - name: Run Cypress API tests
         uses: cypress-io/github-action@v6
         with:
@@ -223,30 +238,87 @@ jobs:
           wait-on-timeout: 120
           command: npm run cypress:api
         env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_test
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_cypress_api
       
-      # Run E2E tests with UI
+      - name: Upload Cypress API screenshots
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-api-screenshots
+          path: cypress/screenshots
+          retention-days: 30
+
+  # Cypress E2E Tests
+  cypress-e2e-tests:
+    name: Cypress E2E Tests
+    runs-on: ubuntu-latest
+    needs: [detect-changes, build]
+    if: needs.detect-changes.outputs.cypress-e2e == 'true'
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: nutriapp_cypress_e2e
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Setup database
+        run: |
+          npx prisma generate
+          npx prisma migrate deploy
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_cypress_e2e
+      
+      - name: Seed database
+        run: node --loader ts-node/esm seed.ts
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_cypress_e2e
+      
       - name: Run Cypress E2E tests
         uses: cypress-io/github-action@v6
         with:
-          install: false
+          build: npm run build
+          start: npm start
+          wait-on: 'http://localhost:3000'
+          wait-on-timeout: 120
           spec: 'cypress/e2e/tests/**/*.cy.js'
         env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_test
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_cypress_e2e
       
-      - name: Upload Cypress screenshots
+      - name: Upload Cypress E2E screenshots
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: cypress-screenshots
+          name: cypress-e2e-screenshots
           path: cypress/screenshots
           retention-days: 30
       
-      - name: Upload Cypress videos
+      - name: Upload Cypress E2E videos
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: cypress-videos
+          name: cypress-e2e-videos
           path: cypress/videos
           retention-days: 30
 

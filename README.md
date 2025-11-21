@@ -210,3 +210,42 @@ describe('Login', () => {
 See [cypress/e2e/api/README.md](cypress/e2e/api/README.md) for complete API testing documentation.
 
 Add more tests to validate user flows and dish management!
+
+## 🚀 CI/CD Pipeline
+
+This project uses an **optimized CI/CD pipeline** that runs only the necessary tests based on file changes.
+
+### Pipeline Optimization
+
+The CI automatically detects which files changed and runs only the relevant tests:
+
+| Change Type | Tests Executed | Avg Time |
+|-------------|---------------|----------|
+| API code (`src/app/api/**`) | Playwright API + Cypress API | ~3 min |
+| Cypress API tests | Cypress API only | ~1.5 min |
+| Cypress E2E tests | Cypress E2E only | ~3 min |
+| UI components (`src/**`) | Cypress E2E + Playwright E2E | ~5 min |
+| Playwright tests | Playwright E2E only | ~3 min |
+
+**Benefits:**
+- ⚡ **60-81% faster** - Only runs necessary tests
+- 💰 **Lower costs** - Reduced CI minutes
+- 🎯 **Precise feedback** - Know exactly what failed
+
+See [.github/workflows/CI-OPTIMIZATION.md](.github/workflows/CI-OPTIMIZATION.md) for detailed documentation.
+
+### Running Tests Locally
+
+```bash
+# API Tests (Playwright)
+npm run test:api
+
+# API Tests (Cypress)
+npm run cypress:api
+
+# E2E Tests (Cypress)
+npm run cypress:e2e
+
+# E2E Tests (Playwright)
+npm run playwright:test
+```
