@@ -1,0 +1,32 @@
+{
+  "validDish": {
+    "name": "Cypress Test Dish",
+    "description": "A delicious test dish created by Cypress",
+    "steps": ["Mix ingredients", "Cook properly", "Serve hot"],
+    "imageUrl": "https://via.placeholder.com/300",
+    "calories": 350,
+    "prepTime": 15,
+    "cookTime": 30,
+    "quickPrep": false
+  },
+  "minimalDish": {
+    "name": "Minimal Test Dish",
+    "description": "Minimal required fields",
+    "steps": ["Basic step"],
+    "prepTime": 5,
+    "cookTime": 10
+  },
+  "quickPrepDish": {
+    "name": "Quick Prep Dish",
+    "description": "Fast to prepare",
+    "steps": ["Fast step"],
+    "calories": 200,
+    "prepTime": 5,
+    "cookTime": 10,
+    "quickPrep": true
+  },
+  "invalidDish": {
+    "description": "Missing required name field"
+  }
+}
+

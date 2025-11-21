@@ -213,13 +213,24 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_test
       
-      - name: Run Cypress tests
+      # Run API tests first (faster, no browser needed)
+      - name: Run Cypress API tests
         uses: cypress-io/github-action@v6
         with:
           build: npm run build
           start: npm start
           wait-on: 'http://localhost:3000'
           wait-on-timeout: 120
+          command: npm run cypress:api
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_test
+      
+      # Run E2E tests with UI
+      - name: Run Cypress E2E tests
+        uses: cypress-io/github-action@v6
+        with:
+          install: false
+          spec: 'cypress/e2e/tests/**/*.cy.js'
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_test
       
@@ -229,6 +240,7 @@ jobs:
         with:
           name: cypress-screenshots
           path: cypress/screenshots
+          retention-days: 30
       
       - name: Upload Cypress videos
         uses: actions/upload-artifact@v4
@@ -236,6 +248,7 @@ jobs:
         with:
           name: cypress-videos
           path: cypress/videos
+          retention-days: 30
 
   # Playwright E2E Tests
   playwright-tests:

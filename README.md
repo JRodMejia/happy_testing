@@ -112,19 +112,78 @@ Official documentation: [https://docs.cypress.io/](https://docs.cypress.io/)
 	 ```json
 	 "scripts": {
 		 ...
-		 "cypress": "cypress open"
+		 "cypress:open": "cypress open",
+		 "cypress:run": "cypress run",
+		 "cypress:api": "cypress run --spec 'cypress/e2e/api/**/*.cy.js'",
+		 "cypress:e2e": "cypress run --spec 'cypress/e2e/tests/**/*.cy.js'"
 	 }
 	 ```
 3. Run Cypress:
 	 ```bash
-	 npm run cypress
+	 # Open Cypress GUI
+	 npm run cypress:open
+	 
+	 # Run all tests headless
+	 npm run cypress:run
+	 
+	 # Run only API tests
+	 npm run cypress:api
+	 
+	 # Run only E2E tests
+	 npm run cypress:e2e
 	 ```
 4. Create your tests in the `cypress/e2e` folder.
 
-**Example test:**
+### Test Structure
+
+```
+cypress/
+├── e2e/
+│   ├── api/              # API tests (27 tests)
+│   │   ├── auth-api.cy.js    # Authentication API tests
+│   │   └── dishes-api.cy.js  # Dishes CRUD API tests
+│   └── tests/            # E2E UI tests
+│       ├── login.cy.js
+│       ├── register.cy.js
+│       └── dishes.cy.js
+├── fixtures/
+│   └── api/              # Test data for API tests
+│       ├── users.json
+│       └── dishes.json
+└── support/
+    ├── commands/         # Custom Cypress commands
+    │   ├── apiCommands.js
+    │   └── commonCommands.js
+    └── helpers/          # Helper functions
+        └── apiHelpers.js
+```
+
+**Example API test:**
 
 ```js
-// cypress/e2e/login.cy.js
+// cypress/e2e/api/dishes-api.cy.js
+
+describe('Dishes API', () => {
+  it('should create a new dish', () => {
+    cy.apiSetupAuth('test@nutriapp.com', 'password123');
+    cy.apiCreateDish({
+      name: 'Test Dish',
+      description: 'Delicious test dish',
+      prepTime: 15,
+      cookTime: 30,
+      steps: ['Mix ingredients', 'Cook', 'Serve']
+    }).then((response) => {
+      expect(response.status).to.eq(200);
+      expect(response.body.dish).to.have.property('id');
+    });
+  });
+});
+```
+
+**Example E2E test:**
+
+```js
+// cypress/e2e/tests/login.cy.js
 
 describe('Login', () => {
 	it('should log in with valid credentials', () => {
@@ -136,5 +195,18 @@ describe('Login', () => {
 	});
 });
 ```
+
+### Available Custom Commands
+
+#### API Commands
+- `cy.apiRegister(userData)` - Register user
+- `cy.apiLogin(email, password)` - Login
+- `cy.apiSetupAuth(email, password)` - Setup authentication
+- `cy.apiGetDishes()` - Get all dishes
+- `cy.apiCreateDish(dishData)` - Create dish
+- `cy.apiUpdateDish(id, data)` - Update dish
+- `cy.apiDeleteDish(id)` - Delete dish
+
+See [cypress/e2e/api/README.md](cypress/e2e/api/README.md) for complete API testing documentation.
 
 Add more tests to validate user flows and dish management!

@@ -7,7 +7,14 @@
 // commands please read more here:
 // https://on.cypress.io/custom-commands
 // ***********************************************
-//
+
+// Import API commands
+import './commands/apiCommands';
+
+// Import existing commands
+import './commands/loginCommands';
+import './commands/commonCommands';
+
 //
 // -- This is a parent command --
 // Cypress.Commands.add('login', (email, password) => { ... })

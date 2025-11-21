@@ -14,8 +14,10 @@
 // ***********************************************************
 
 // Import commands
+import './commands';
 import './commands/commonCommands';
 import './commands/loginCommands';
+import './commands/apiCommands';
 
 // Hide fetch/XHR requests from command log
 const app = window.top;

@@ -1,0 +1,17 @@
+{
+  "validUser": {
+    "email": "cypress_user@test.com",
+    "password": "SecurePassword123!",
+    "firstName": "Cypress",
+    "lastName": "User",
+    "nationality": "USA",
+    "phone": "1234567890"
+  },
+  "invalidCredentials": {
+    "email": "invalid@test.com",
+    "password": "WrongPassword"
+  },
+  "missingFields": {
+    "email": "incomplete@test.com"
+  }
+}
