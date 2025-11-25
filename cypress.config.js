@@ -17,3 +17,12 @@ export default defineConfig({
     },
   },
 });
+
+module.exports = {
+  e2e: {
+    setupNodeEvents(on, config) {
+      // configuración opcional
+    },
+    projectId: "abfpdf",
+  }
+}
