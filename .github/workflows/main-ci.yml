@@ -239,7 +239,7 @@ jobs:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_cypress_api
       
       - name: Run Cypress API tests
-        run: npx cypress run --spec 'cypress/e2e/api/**/*.cy.js' --record --parallel --ci-build-id ${{ github.sha }}-${{ github.run_number }}
+        run: npx cypress run --spec 'cypress/e2e/api/**/*.cy.js' --record --group 'API' --ci-build-id ${{ github.sha }}-${{ github.run_number }}
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_cypress_api
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
@@ -320,7 +320,7 @@ jobs:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_cypress_e2e
       
       - name: Run Cypress E2E tests
-        run: npx cypress run --spec 'cypress/e2e/tests/**/*.cy.js' --record --parallel --ci-build-id ${{ github.sha }}-${{ github.run_number }}
+        run: npx cypress run --spec 'cypress/e2e/tests/**/*.cy.js' --record --group 'E2E' --ci-build-id ${{ github.sha }}-${{ github.run_number }}
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_cypress_e2e
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}

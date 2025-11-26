@@ -95,7 +95,7 @@ El archivo `.github/workflows/main-ci.yml` ya incluye:
 ### Cypress API Tests:
 ```yaml
 - name: Run Cypress API tests
-  run: npx cypress run --spec 'cypress/e2e/api/**/*.cy.js' --record --parallel --ci-build-id ${{ github.sha }}-${{ github.run_number }}
+  run: npx cypress run --spec 'cypress/e2e/api/**/*.cy.js' --record --group 'API' --ci-build-id ${{ github.sha }}-${{ github.run_number }}
   env:
     CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -104,7 +104,7 @@ El archivo `.github/workflows/main-ci.yml` ya incluye:
 ### Cypress E2E Tests:
 ```yaml
 - name: Run Cypress E2E tests
-  run: npx cypress run --spec 'cypress/e2e/tests/**/*.cy.js' --record --parallel --ci-build-id ${{ github.sha }}-${{ github.run_number }}
+  run: npx cypress run --spec 'cypress/e2e/tests/**/*.cy.js' --record --group 'E2E' --ci-build-id ${{ github.sha }}-${{ github.run_number }}
   env:
     CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -113,9 +113,11 @@ El archivo `.github/workflows/main-ci.yml` ya incluye:
 ### Parámetros Explicados:
 
 - `--record`: Envía resultados a Cypress Dashboard
-- `--parallel`: Habilita ejecución paralela
-- `--ci-build-id`: ID único para agrupar runs paralelos
+- `--group 'API'` / `--group 'E2E'`: Agrupa tests en el mismo run (evita errores de paralelización)
+- `--ci-build-id`: ID único para agrupar runs en el mismo build
 - `${{ github.sha }}-${{ github.run_number }}`: Build ID único por commit + run
+
+**Importante:** El `--group` permite ejecutar diferentes specs (API vs E2E) en el mismo run del Dashboard sin conflictos de paralelización.
 
 ## 🎬 Videos y Artifacts
 
@@ -145,8 +147,14 @@ video: true  # Habilita grabación automática
 # Set your record key
 $env:CYPRESS_RECORD_KEY="your-record-key-here"
 
-# Run with recording
+# Run with recording (all tests)
 npx cypress run --record
+
+# Run API tests with recording
+npm run cypress:api:record
+
+# Run E2E tests with recording
+npm run cypress:e2e:record
 
 # Run specific suite
 npx cypress run --spec "cypress/e2e/api/**/*.cy.js" --record
@@ -215,15 +223,24 @@ steps:
     run: npx cypress run --record --parallel --ci-build-id ${{ github.sha }}
 ```
 
-### Group Tests:
+### Group Tests (Ya Implementado en el Proyecto):
+
+Este proyecto ya usa grupos para separar API y E2E tests:
 
 ```bash
-# API Tests group
-npx cypress run --spec "cypress/e2e/api/**" --record --group "API" --parallel
+# API Tests group (ya configurado en CI)
+npx cypress run --spec "cypress/e2e/api/**" --record --group "API"
 
-# E2E Tests group
-npx cypress run --spec "cypress/e2e/tests/**" --record --group "E2E" --parallel
+# E2E Tests group (ya configurado en CI)
+npx cypress run --spec "cypress/e2e/tests/**" --record --group "E2E"
 ```
+
+**Beneficio:** Ambos grupos aparecen en el mismo run del Dashboard, permitiendo:
+- Ver todos los tests de un commit en un solo lugar
+- Comparar performance entre API y E2E
+- Identificar qué tipo de tests fallan más
+
+**Nota:** No uses `--parallel` con `--group` a menos que tengas múltiples máquinas ejecutando el mismo grupo.
 
 ### Tag Builds:
 
