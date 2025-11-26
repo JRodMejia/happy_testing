@@ -10,7 +10,7 @@ export default defineConfig({
     videosFolder: 'cypress/videos',
     viewportWidth: 1280,
     viewportHeight: 720,
-    video: false,
+    video: true, // Enable for Cypress Dashboard
     screenshotOnRunFailure: true,
     projectId: 'abfpdf',
     setupNodeEvents() {

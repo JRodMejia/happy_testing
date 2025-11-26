@@ -249,3 +249,31 @@ npm run cypress:e2e
 # E2E Tests (Playwright)
 npm run playwright:test
 ```
+
+## 📊 Cypress Dashboard Integration
+
+This project is configured to use **Cypress Dashboard** (Cypress Cloud) for enhanced test monitoring and analytics.
+
+### Features Available:
+- 📹 **Video recordings** of all test runs
+- 📸 **Screenshots** on failures
+- 📊 **Test analytics** and performance metrics
+- 🔄 **Parallel execution** for faster runs
+- 🎯 **Flaky test detection**
+- 📈 **Historical trends** and reports
+- 🔗 **GitHub integration** with PR comments
+
+### Setup Required:
+
+1. **Get your Cypress Record Key** from [Cypress Cloud](https://cloud.cypress.io)
+2. **Add to GitHub Secrets**:
+   - Go to: `Settings > Secrets and variables > Actions`
+   - Add secret: `CYPRESS_RECORD_KEY` = your-record-key
+
+Once configured, every CI run will automatically:
+- Record test execution
+- Upload videos and screenshots
+- Generate detailed analytics
+- Display results in [Cypress Dashboard](https://cloud.cypress.io/projects/abfpdf)
+
+**📖 Full setup guide:** [.github/workflows/CYPRESS-DASHBOARD-SETUP.md](.github/workflows/CYPRESS-DASHBOARD-SETUP.md)
