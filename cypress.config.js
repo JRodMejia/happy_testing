@@ -12,17 +12,9 @@ export default defineConfig({
     viewportHeight: 720,
     video: false,
     screenshotOnRunFailure: true,
+    projectId: 'abfpdf',
     setupNodeEvents() {
       // implement node event listeners here
     },
   },
 });
-
-module.exports = {
-  e2e: {
-    setupNodeEvents(on, config) {
-      // configuración opcional
-    },
-    projectId: "abfpdf",
-  }
-}

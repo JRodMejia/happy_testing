@@ -8,7 +8,6 @@ import {
 describe('API Tests - Dishes CRUD', () => {
   let registeredUserEmail;
   let registeredUserPassword;
-  let userRegistered = false;
 
   before(() => {
     // Register user once for all tests
@@ -24,7 +23,6 @@ describe('API Tests - Dishes CRUD', () => {
 
       cy.apiRegister(userData).then((response) => {
         expect(response.status).to.eq(200);
-        userRegistered = true;
       });
     });
   });

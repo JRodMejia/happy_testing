@@ -229,14 +229,17 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_cypress_api
       
+      - name: Start Next.js app in background
+        run: |
+          npx prisma generate
+          npm run build
+          npm start &
+          npx wait-on http://localhost:3000 --timeout 120000
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_cypress_api
+      
       - name: Run Cypress API tests
-        uses: cypress-io/github-action@v6
-        with:
-          build: npm run build
-          start: npm start
-          wait-on: 'http://localhost:3000'
-          wait-on-timeout: 120
-          command: npm run cypress:api
+        run: npm run cypress:api
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_cypress_api
       
@@ -247,6 +250,7 @@ jobs:
           name: cypress-api-screenshots
           path: cypress/screenshots
           retention-days: 30
+          if-no-files-found: ignore
 
   # Cypress E2E Tests
   cypress-e2e-tests:
@@ -295,14 +299,17 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_cypress_e2e
       
+      - name: Start Next.js app in background
+        run: |
+          npx prisma generate
+          npm run build
+          npm start &
+          npx wait-on http://localhost:3000 --timeout 120000
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_cypress_e2e
+      
       - name: Run Cypress E2E tests
-        uses: cypress-io/github-action@v6
-        with:
-          build: npm run build
-          start: npm start
-          wait-on: 'http://localhost:3000'
-          wait-on-timeout: 120
-          spec: 'cypress/e2e/tests/**/*.cy.js'
+        run: npm run cypress:e2e
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_cypress_e2e
       
@@ -313,14 +320,7 @@ jobs:
           name: cypress-e2e-screenshots
           path: cypress/screenshots
           retention-days: 30
-      
-      - name: Upload Cypress E2E videos
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: cypress-e2e-videos
-          path: cypress/videos
-          retention-days: 30
+          if-no-files-found: ignore
 
   # Playwright E2E Tests
   playwright-tests:
