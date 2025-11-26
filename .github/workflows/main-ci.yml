@@ -180,7 +180,7 @@ jobs:
             api-test-results/html-report/
             api-test-results/results.json
           retention-days: 30
-          if-no-files-found: warn
+          if-no-files-found: ignore
 
   # Cypress API Tests
   cypress-api-tests:

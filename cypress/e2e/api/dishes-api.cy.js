@@ -110,7 +110,7 @@ describe('API Tests - Dishes CRUD', () => {
 
         cy.apiCreateDish(quickDish).then((response) => {
           expect(response.status).to.eq(200);
-          expect(response.body.dish.quickPrep).to.be.true;
+          expect(response.body.dish.quickPrep).to.equal(true);
         });
       });
     });
