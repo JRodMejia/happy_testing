@@ -77,7 +77,7 @@ test.describe('Login Page - Negative Tests', () => {
   });
 
   test('should not login with correct email but wrong password', async ({ page }) => {
-    await loginPage.login(testUsers.valid.email, 'wrongpassword123');
+    await loginPage.login(testUsers.valid.email, 'wronpgpassword123');
     
     await expect(loginPage.errorMessage).toBeVisible();
     await expect(page).toHaveURL(/.*\/login/);
