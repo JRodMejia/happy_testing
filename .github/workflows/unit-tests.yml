@@ -1,0 +1,94 @@
+name: Unit Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'src/**/*.{test,spec}.{ts,tsx}'
+      - 'src/__tests__/**'
+      - 'src/lib/**'
+      - 'src/app/**/*.tsx'
+      - 'vitest.config.ts'
+      - 'vitest.setup.ts'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/unit-tests.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'src/**/*.{test,spec}.{ts,tsx}'
+      - 'src/__tests__/**'
+      - 'src/lib/**'
+      - 'src/app/**/*.tsx'
+      - 'vitest.config.ts'
+      - 'vitest.setup.ts'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/unit-tests.yml'
+  workflow_dispatch:
+
+jobs:
+  unit-tests:
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [20]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run unit tests
+        run: npm run test:run
+      
+      - name: Generate coverage report
+        run: npm run test:coverage
+        continue-on-error: true
+      
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        if: always()
+        with:
+          file: ./coverage/coverage-final.json
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      
+      - name: Upload coverage report (HTML)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report-html
+          path: coverage/
+          retention-days: 30
+          if-no-files-found: ignore
+      
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unit-test-results
+          path: test-results/
+          retention-days: 30
+          if-no-files-found: ignore
+      
+      - name: Comment coverage on PR
+        uses: romeovs/lcov-reporter-action@v0.3.1
+        if: github.event_name == 'pull_request'
+        with:
+          lcov-file: ./coverage/lcov.info
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          delete-old-comments: true
