@@ -128,7 +128,8 @@ jobs:
         run: npm run build
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nutriapp_test
-Unit Tests - runs independently, no database needed
+
+  # Unit Tests - runs independently, no database needed
   unit-tests:
     name: Vitest Unit Tests
     runs-on: ubuntu-latest
